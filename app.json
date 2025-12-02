@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "d6339176-9211-4e2a-9bc4-339deebbc584"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.wesso80.workspace",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}
