@@ -24,6 +24,10 @@ args = "Market Scanner Pro"
 task = "workflow.run"
 args = "Native App (Expo)"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Native App Preview"
+
 [[workflows.workflow]]
 name = "Market Scanner Pro"
 author = "agent"
@@ -46,6 +50,18 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd native-app && npm install --legacy-peer-deps 2>/dev/null && npx expo start --lan"
+
+[[workflows.workflow]]
+name = "Native App Preview"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd native-app-preview && python -m http.server 5001"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
