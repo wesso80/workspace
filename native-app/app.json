@@ -18,7 +18,8 @@
       "bundleIdentifier": "app.marketscannerpros",
       "buildNumber": "1",
       "infoPlist": {
-        "UIBackgroundModes": ["fetch", "remote-notification"]
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -43,7 +44,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "market-scanner-pro"
+        "projectId": "0ebc6f5e-648c-4a6b-ae94-4b334c9bfac2"
       }
     },
     "owner": "wesso80"
