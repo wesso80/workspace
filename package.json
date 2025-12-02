@@ -12,5 +12,8 @@
   "dependencies": {
     "expo-dev-client": "^6.0.18",
     "vercel": "^48.11.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10"
   }
 }
