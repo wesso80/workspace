@@ -1,9 +1,28 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
-import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '@/constants/Colors';
-import { ScannerCard } from '@/components/ScannerCard';
-import { SegmentedControl } from '@/components/SegmentedControl';
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  accent: '#14b8a6',
+  accentSoft: 'rgba(20, 184, 166, 0.12)',
+  green: '#22c55e',
+  greenSoft: 'rgba(34, 197, 94, 0.12)',
+  greenText: '#bbf7d0',
+  greenBorder: 'rgba(34, 197, 94, 0.7)',
+  tealLight: '#a5f3fc',
+  tealBorder: 'rgba(34, 197, 235, 0.35)',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+  borderSubtle: 'rgba(148, 163, 184, 0.25)',
+  badgeBg: 'rgba(15, 23, 42, 0.9)',
+  bullish: '#22c55e',
+  bullishSoft: 'rgba(34, 197, 94, 0.12)',
+  bearish: '#ef4444',
+  bearishSoft: 'rgba(239, 68, 68, 0.12)',
+};
 
 type MarketType = 'equities' | 'crypto' | 'commodities';
 
@@ -29,6 +48,91 @@ const mockData = {
   ],
 };
 
+function ScannerCard({ symbol, name, price, change, changePercent, score, signal }: {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  score: number;
+  signal: 'Bullish' | 'Bearish';
+}) {
+  const isBullish = score >= 0;
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.leftSection}>
+        <View style={styles.symbolContainer}>
+          <View style={[styles.symbolIcon, { backgroundColor: isBullish ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+            <Text style={[styles.symbolIconText, { color: isBullish ? COLORS.bullish : COLORS.bearish }]}>
+              {symbol.charAt(0)}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.symbol}>{symbol}</Text>
+            <Text style={styles.name} numberOfLines={1}>{name}</Text>
+          </View>
+        </View>
+      </View>
+      
+      <View style={styles.centerSection}>
+        <Text style={styles.price}>
+          ${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </Text>
+        <View style={[styles.changeBadge, { backgroundColor: change >= 0 ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+          <Text style={[styles.changeText, { color: change >= 0 ? COLORS.bullish : COLORS.bearish }]}>
+            {change >= 0 ? '↑' : '↓'} {Math.abs(changePercent).toFixed(2)}%
+          </Text>
+        </View>
+      </View>
+      
+      <View style={styles.rightSection}>
+        <View style={[styles.signalBadge, { 
+          backgroundColor: isBullish ? COLORS.greenSoft : COLORS.bearishSoft,
+          borderWidth: 1,
+          borderColor: isBullish ? COLORS.greenBorder : 'rgba(239, 68, 68, 0.5)'
+        }]}>
+          <Text style={[styles.signalText, { color: isBullish ? COLORS.greenText : '#fca5a5' }]}>
+            {signal}
+          </Text>
+        </View>
+        <View style={[styles.scoreBadge, { backgroundColor: isBullish ? COLORS.bullish : COLORS.bearish }]}>
+          <Text style={styles.scoreText}>{score >= 0 ? '+' : ''}{score}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function SegmentedControl({ options, selectedIndex, onSelect }: {
+  options: string[];
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <View style={styles.segmentContainer}>
+      {options.map((option, index) => (
+        <TouchableOpacity
+          key={option}
+          style={[
+            styles.segment,
+            index === selectedIndex && styles.segmentActive,
+          ]}
+          onPress={() => onSelect(index)}
+          activeOpacity={0.7}
+        >
+          <Text style={[
+            styles.segmentText,
+            index === selectedIndex && styles.segmentTextActive,
+          ]}>
+            {option}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+}
+
 export default function ScannerScreen() {
   const [marketType, setMarketType] = useState<MarketType>('equities');
   const [refreshing, setRefreshing] = useState(false);
@@ -41,10 +145,6 @@ export default function ScannerScreen() {
   const data = mockData[marketType];
   const bullishCount = data.filter(d => d.score >= 0).length;
   const bearishCount = data.filter(d => d.score < 0).length;
-
-  const handleCardPress = (symbol: string) => {
-    router.push(`/stock/${symbol}`);
-  };
 
   return (
     <View style={styles.container}>
@@ -73,12 +173,12 @@ export default function ScannerScreen() {
         <View style={styles.summary}>
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>Bullish</Text>
-            <Text style={[styles.summaryValue, { color: Colors.dark.bullish }]}>{bullishCount}</Text>
+            <Text style={[styles.summaryValue, { color: COLORS.bullish }]}>{bullishCount}</Text>
           </View>
           <View style={styles.summaryDivider} />
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>Bearish</Text>
-            <Text style={[styles.summaryValue, { color: Colors.dark.bearish }]}>{bearishCount}</Text>
+            <Text style={[styles.summaryValue, { color: COLORS.bearish }]}>{bearishCount}</Text>
           </View>
           <View style={styles.summaryDivider} />
           <View style={styles.summaryItem}>
@@ -95,12 +195,16 @@ export default function ScannerScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.dark.green}
+            tintColor={COLORS.green}
           />
         }
       >
         {data.map((item) => (
-          <TouchableOpacity key={item.symbol} onPress={() => handleCardPress(item.symbol)} activeOpacity={0.7}>
+          <TouchableOpacity 
+            key={item.symbol} 
+            onPress={() => router.push(`/stock/${item.symbol}`)} 
+            activeOpacity={0.7}
+          >
             <ScannerCard {...item} />
           </TouchableOpacity>
         ))}
@@ -116,11 +220,11 @@ export default function ScannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: COLORS.background,
   },
   header: {
-    padding: Spacing.md,
-    gap: Spacing.md,
+    padding: 16,
+    gap: 16,
   },
   topRow: {
     flexDirection: 'row',
@@ -130,67 +234,94 @@ const styles = StyleSheet.create({
   freeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    backgroundColor: Colors.dark.badgeBg,
+    gap: 8,
+    backgroundColor: COLORS.badgeBg,
     padding: 4,
     paddingRight: 12,
-    borderRadius: BorderRadius.full,
+    borderRadius: 999,
     borderWidth: 1,
-    borderColor: Colors.dark.borderSubtle,
+    borderColor: COLORS.borderSubtle,
   },
   freeTag: {
-    backgroundColor: Colors.dark.greenSoft,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: COLORS.greenSoft,
+    paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: BorderRadius.full,
+    borderRadius: 999,
   },
   freeTagText: {
-    fontSize: FontSize.xs,
+    fontSize: 11,
     fontWeight: '600',
-    color: Colors.dark.greenText,
+    color: COLORS.greenText,
   },
   freeSubtext: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
+    fontSize: 11,
+    color: COLORS.textMuted,
   },
   searchButton: {
     width: 44,
     height: 44,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.dark.card,
+    borderRadius: 12,
+    backgroundColor: COLORS.card,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: COLORS.border,
   },
   searchIcon: {
     fontSize: 18,
+  },
+  segmentContainer: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.card,
+    borderRadius: 18,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  segment: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+  segmentActive: {
+    backgroundColor: COLORS.accent,
+  },
+  segmentText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+  },
+  segmentTextActive: {
+    color: '#0b1120',
+    fontWeight: '600',
   },
   summary: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
+    backgroundColor: COLORS.card,
+    borderRadius: 18,
+    padding: 16,
     borderWidth: 1,
-    borderColor: Colors.dark.border,
-    ...Shadows.soft,
+    borderColor: COLORS.border,
   },
   summaryItem: {
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: 4,
   },
   summaryLabel: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
+    fontSize: 11,
+    color: COLORS.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   summaryValue: {
-    fontSize: FontSize.xl,
+    fontSize: 22,
     fontWeight: '700',
-    color: Colors.dark.text,
+    color: COLORS.text,
   },
   summaryDivider: {
     width: 1,
@@ -201,24 +332,106 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Spacing.md,
+    padding: 16,
     paddingTop: 0,
-    gap: Spacing.sm,
+    gap: 8,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.card,
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  leftSection: {
+    flex: 1,
+  },
+  symbolContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  symbolIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  symbolIconText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  symbol: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  name: {
+    fontSize: 11,
+    color: COLORS.textMuted,
+    marginTop: 2,
+  },
+  centerSection: {
+    alignItems: 'flex-end',
+    marginRight: 16,
+  },
+  price: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+  changeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  changeText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  rightSection: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  signalBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  signalText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  scoreBadge: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scoreText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0b1120',
   },
   trustedBadge: {
     alignItems: 'center',
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.xl,
+    marginTop: 24,
+    marginBottom: 32,
   },
   trustedText: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.tealLight,
-    backgroundColor: Colors.dark.accentSoft,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
+    fontSize: 11,
+    color: COLORS.tealLight,
+    backgroundColor: COLORS.accentSoft,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 999,
     borderWidth: 1,
-    borderColor: Colors.dark.tealBorder,
+    borderColor: COLORS.tealBorder,
     overflow: 'hidden',
   },
 });

@@ -1,23 +1,27 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
-import { Colors } from '@/constants/Colors';
+
+const COLORS = {
+  background: '#05070b',
+  text: '#f9fafb',
+};
 
 export default function RootLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
       <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: Colors.dark.background,
+            backgroundColor: COLORS.background,
           },
-          headerTintColor: Colors.dark.text,
+          headerTintColor: COLORS.text,
           headerTitleStyle: {
             fontWeight: '600',
           },
           contentStyle: {
-            backgroundColor: Colors.dark.background,
+            backgroundColor: COLORS.background,
           },
         }}
       >

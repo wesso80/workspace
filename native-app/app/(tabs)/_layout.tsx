@@ -1,6 +1,16 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, FontSize, BorderRadius } from '@/constants/Colors';
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  accent: '#14b8a6',
+  green: '#22c55e',
+  greenSoft: 'rgba(34, 197, 94, 0.12)',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+};
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
@@ -22,30 +32,30 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.dark.green,
-        tabBarInactiveTintColor: Colors.dark.textMuted,
+        tabBarActiveTintColor: COLORS.green,
+        tabBarInactiveTintColor: COLORS.textMuted,
         tabBarStyle: {
-          backgroundColor: Colors.dark.card,
-          borderTopColor: Colors.dark.border,
+          backgroundColor: COLORS.card,
+          borderTopColor: COLORS.border,
           borderTopWidth: 1,
           height: 88,
           paddingTop: 8,
           paddingBottom: 28,
         },
         tabBarLabelStyle: {
-          fontSize: FontSize.xs,
+          fontSize: 11,
           fontWeight: '600',
           marginTop: 4,
         },
         headerStyle: {
-          backgroundColor: Colors.dark.background,
+          backgroundColor: COLORS.background,
           borderBottomWidth: 1,
-          borderBottomColor: Colors.dark.border,
+          borderBottomColor: COLORS.border,
         },
-        headerTintColor: Colors.dark.text,
+        headerTintColor: COLORS.text,
         headerTitleStyle: {
           fontWeight: '700',
-          fontSize: FontSize.lg,
+          fontSize: 16,
         },
         headerShadowVisible: false,
       }}
@@ -118,12 +128,12 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 38,
     height: 38,
-    borderRadius: BorderRadius.md,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconContainerActive: {
-    backgroundColor: Colors.dark.greenSoft,
+    backgroundColor: COLORS.greenSoft,
   },
   headerTitle: {
     flexDirection: 'row',
@@ -131,13 +141,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   headerTitleText: {
-    fontSize: FontSize.xl,
+    fontSize: 22,
     fontWeight: '700',
-    color: Colors.dark.text,
+    color: COLORS.text,
   },
   headerTitleAccent: {
-    fontSize: FontSize.xl,
+    fontSize: 22,
     fontWeight: '700',
-    color: Colors.dark.green,
+    color: COLORS.green,
   },
 });

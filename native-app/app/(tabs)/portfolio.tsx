@@ -1,6 +1,21 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
-import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '@/constants/Colors';
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  green: '#22c55e',
+  greenSoft: 'rgba(34, 197, 94, 0.12)',
+  greenText: '#bbf7d0',
+  greenBorder: 'rgba(34, 197, 94, 0.7)',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+  bullish: '#22c55e',
+  bullishSoft: 'rgba(34, 197, 94, 0.12)',
+  bearish: '#ef4444',
+  bearishSoft: 'rgba(239, 68, 68, 0.12)',
+};
 
 const mockPortfolio = [
   { symbol: 'AAPL', shares: 50, avgCost: 150.00, currentPrice: 189.84 },
@@ -28,7 +43,7 @@ export default function PortfolioScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.dark.green} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.green} />
         }
       >
         <View style={styles.totalCard}>
@@ -40,11 +55,11 @@ export default function PortfolioScreen() {
           </View>
           <Text style={styles.totalValue}>${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
           <View style={styles.plRow}>
-            <Text style={[styles.plValue, { color: totalPL >= 0 ? Colors.dark.bullish : Colors.dark.bearish }]}>
+            <Text style={[styles.plValue, { color: totalPL >= 0 ? COLORS.bullish : COLORS.bearish }]}>
               {totalPL >= 0 ? '+' : ''}${Math.abs(totalPL).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </Text>
-            <View style={[styles.plBadge, { backgroundColor: totalPL >= 0 ? Colors.dark.bullishSoft : Colors.dark.bearishSoft }]}>
-              <Text style={[styles.plPercent, { color: totalPL >= 0 ? Colors.dark.bullish : Colors.dark.bearish }]}>
+            <View style={[styles.plBadge, { backgroundColor: totalPL >= 0 ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+              <Text style={[styles.plPercent, { color: totalPL >= 0 ? COLORS.bullish : COLORS.bearish }]}>
                 {totalPL >= 0 ? '↑' : '↓'} {Math.abs(totalPLPercent).toFixed(2)}%
               </Text>
             </View>
@@ -66,8 +81,8 @@ export default function PortfolioScreen() {
           return (
             <TouchableOpacity key={holding.symbol} style={styles.holdingCard} activeOpacity={0.7}>
               <View style={styles.holdingLeft}>
-                <View style={[styles.holdingIcon, { backgroundColor: isBullish ? Colors.dark.bullishSoft : Colors.dark.bearishSoft }]}>
-                  <Text style={[styles.holdingIconText, { color: isBullish ? Colors.dark.bullish : Colors.dark.bearish }]}>
+                <View style={[styles.holdingIcon, { backgroundColor: isBullish ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+                  <Text style={[styles.holdingIconText, { color: isBullish ? COLORS.bullish : COLORS.bearish }]}>
                     {holding.symbol.charAt(0)}
                   </Text>
                 </View>
@@ -78,8 +93,8 @@ export default function PortfolioScreen() {
               </View>
               <View style={styles.holdingRight}>
                 <Text style={styles.holdingValue}>${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
-                <View style={[styles.holdingPLBadge, { backgroundColor: isBullish ? Colors.dark.bullishSoft : Colors.dark.bearishSoft }]}>
-                  <Text style={[styles.holdingPL, { color: isBullish ? Colors.dark.bullish : Colors.dark.bearish }]}>
+                <View style={[styles.holdingPLBadge, { backgroundColor: isBullish ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+                  <Text style={[styles.holdingPL, { color: isBullish ? COLORS.bullish : COLORS.bearish }]}>
                     {isBullish ? '↑' : '↓'} {Math.abs(plPercent).toFixed(2)}%
                   </Text>
                 </View>
@@ -91,186 +106,38 @@ export default function PortfolioScreen() {
         <TouchableOpacity style={styles.addButton} activeOpacity={0.8}>
           <Text style={styles.addButtonText}>+ Add Position</Text>
         </TouchableOpacity>
-
-        <View style={styles.proTip}>
-          <Text style={styles.proTipTitle}>Pro features available</Text>
-          <Text style={styles.proTipText}>Backtesting, advanced charts, and TradingView integration when you're ready to upgrade.</Text>
-        </View>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Spacing.md,
-  },
-  totalCard: {
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    marginBottom: Spacing.lg,
-    ...Shadows.soft,
-  },
-  totalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  totalLabel: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  includedBadge: {
-    backgroundColor: Colors.dark.greenSoft,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: Colors.dark.greenBorder,
-  },
-  includedText: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-    color: Colors.dark.greenText,
-  },
-  totalValue: {
-    fontSize: FontSize.xxxl,
-    fontWeight: '700',
-    color: Colors.dark.text,
-    marginBottom: Spacing.sm,
-  },
-  plRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  plValue: {
-    fontSize: FontSize.lg,
-    fontWeight: '600',
-  },
-  plBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  plPercent: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  sectionTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  sectionCount: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.textMuted,
-  },
-  holdingCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    ...Shadows.small,
-  },
-  holdingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  holdingIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  holdingIconText: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-  },
-  holdingSymbol: {
-    fontSize: FontSize.md,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  holdingShares: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
-    marginTop: 2,
-  },
-  holdingRight: {
-    alignItems: 'flex-end',
-    gap: Spacing.xs,
-  },
-  holdingValue: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.dark.text,
-  },
-  holdingPLBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
-  },
-  holdingPL: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-  },
-  addButton: {
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.full,
-    padding: Spacing.md,
-    alignItems: 'center',
-    marginTop: Spacing.sm,
-    ...Shadows.small,
-  },
-  addButtonText: {
-    color: '#0b1120',
-    fontSize: FontSize.md,
-    fontWeight: '600',
-  },
-  proTip: {
-    marginTop: Spacing.lg,
-    padding: Spacing.md,
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  proTipTitle: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    marginBottom: Spacing.xs,
-  },
-  proTipText: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.textMuted,
-    lineHeight: 20,
-  },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16 },
+  totalCard: { backgroundColor: COLORS.card, borderRadius: 18, padding: 24, borderWidth: 1, borderColor: COLORS.border, marginBottom: 24 },
+  totalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  totalLabel: { fontSize: 13, color: COLORS.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  includedBadge: { backgroundColor: COLORS.greenSoft, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, borderWidth: 1, borderColor: COLORS.greenBorder },
+  includedText: { fontSize: 11, fontWeight: '600', color: COLORS.greenText },
+  totalValue: { fontSize: 36, fontWeight: '700', color: COLORS.text, marginBottom: 8 },
+  plRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  plValue: { fontSize: 16, fontWeight: '600' },
+  plBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  plPercent: { fontSize: 13, fontWeight: '600' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: COLORS.text },
+  sectionCount: { fontSize: 13, color: COLORS.textMuted },
+  holdingCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: COLORS.card, borderRadius: 18, padding: 16, marginBottom: 8, borderWidth: 1, borderColor: COLORS.border },
+  holdingLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  holdingIcon: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  holdingIconText: { fontSize: 16, fontWeight: '700' },
+  holdingSymbol: { fontSize: 15, fontWeight: '700', color: COLORS.text },
+  holdingShares: { fontSize: 11, color: COLORS.textMuted, marginTop: 2 },
+  holdingRight: { alignItems: 'flex-end', gap: 4 },
+  holdingValue: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  holdingPLBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },
+  holdingPL: { fontSize: 11, fontWeight: '600' },
+  addButton: { backgroundColor: '#14b8a6', borderRadius: 999, padding: 16, alignItems: 'center', marginTop: 8 },
+  addButtonText: { color: '#0b1120', fontSize: 15, fontWeight: '600' },
 });
