@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Market Scanner Pro - Native App Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #05070b;
+      --card-bg: #111624;
+      --accent: #14b8a6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --border: #1f2933;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .phone-frame {
+      max-width: 400px;
+      margin: 20px auto;
+      background: var(--bg);
+      border-radius: 40px;
+      border: 3px solid #333;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .notch {
+      width: 150px;
+      height: 30px;
+      background: #000;
+      margin: 0 auto;
+      border-radius: 0 0 20px 20px;
+    }
+    
+    .header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .header-icons {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .content {
+      padding: 16px;
+      flex: 1;
+      overflow-y: auto;
+      height: 500px;
+    }
+    
+    .segment-control {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 16px;
+    }
+    
+    .segment {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .segment.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .scanner-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .symbol {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge.bullish {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--green);
+    }
+    
+    .badge.bearish {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--red);
+    }
+    
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .card-label {
+      color: var(--text-muted);
+    }
+    
+    .card-value {
+      font-weight: 500;
+    }
+    
+    .card-value.green { color: var(--green); }
+    .card-value.red { color: var(--red); }
+    
+    .tab-bar {
+      display: flex;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 8px 0 24px;
+    }
+    
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      color: var(--text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .tab.active {
+      color: var(--accent);
+    }
+    
+    .tab svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .screen-title {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .screens-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      flex-wrap: wrap;
+    }
+
+    .screen-btn {
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .screen-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .screen-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Portfolio Screen */
+    .portfolio-total {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .portfolio-label {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .portfolio-value {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .portfolio-change {
+      color: var(--green);
+      font-size: 16px;
+      margin-top: 4px;
+    }
+
+    .holding-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .holding-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .holding-info p {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .holding-value {
+      text-align: right;
+    }
+
+    .holding-value h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* Journal Screen */
+    .trade-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--green);
+    }
+
+    .trade-card.loss {
+      border-left-color: var(--red);
+    }
+
+    .trade-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .trade-symbol {
+      font-weight: 600;
+    }
+
+    .trade-pnl {
+      font-weight: 600;
+    }
+
+    .trade-details {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Alerts Screen */
+    .alert-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .alert-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-info p {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .alert-status {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-title">Market Scanner Pro - Native App Preview</div>
+  
+  <div class="screens-nav">
+    <button class="screen-btn active" onclick="showScreen('scanner')">Scanner</button>
+    <button class="screen-btn" onclick="showScreen('portfolio')">Portfolio</button>
+    <button class="screen-btn" onclick="showScreen('journal')">Journal</button>
+    <button class="screen-btn" onclick="showScreen('alerts')">Alerts</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="notch"></div>
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>100%</span>
+    </div>
+    
+    <!-- Scanner Screen -->
+    <div id="scanner-screen">
+      <div class="header">
+        <h1>Scanner</h1>
+        <div class="header-icons">
+          <span>🔍</span>
+          <span>⚙️</span>
+        </div>
+      </div>
+      
+      <div class="content">
+        <div class="segment-control">
+          <div class="segment active">Equities</div>
+          <div class="segment">Crypto</div>
+          <div class="segment">Commodities</div>
+        </div>
+        
+        <div class="scanner-card">
+          <div class="card-header">
+            <span class="symbol">AAPL</span>
+            <span class="badge bullish">Bullish</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Price</span>
+            <span class="card-value">$178.52</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Change</span>
+            <span class="card-value green">+2.34%</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Score</span>
+            <span class="card-value green">+3</span>
+          </div>
+        </div>
+        
+        <div class="scanner-card">
+          <div class="card-header">
+            <span class="symbol">MSFT</span>
+            <span class="badge bullish">Bullish</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Price</span>
+            <span class="card-value">$378.91</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Change</span>
+            <span class="card-value green">+1.87%</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Score</span>
+            <span class="card-value green">+2</span>
+          </div>
+        </div>
+        
+        <div class="scanner-card">
+          <div class="card-header">
+            <span class="symbol">NVDA</span>
+            <span class="badge bearish">Bearish</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Price</span>
+            <span class="card-value">$721.33</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Change</span>
+            <span class="card-value red">-1.24%</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Score</span>
+            <span class="card-value red">-2</span>
+          </div>
+        </div>
+
+        <div class="scanner-card">
+          <div class="card-header">
+            <span class="symbol">TSLA</span>
+            <span class="badge bullish">Bullish</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Price</span>
+            <span class="card-value">$248.50</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Change</span>
+            <span class="card-value green">+3.12%</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">Score</span>
+            <span class="card-value green">+4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Screen -->
+    <div id="portfolio-screen" style="display: none;">
+      <div class="header">
+        <h1>Portfolio</h1>
+        <div class="header-icons">
+          <span>➕</span>
+        </div>
+      </div>
+      
+      <div class="content">
+        <div class="portfolio-total">
+          <div class="portfolio-label">Total Value</div>
+          <div class="portfolio-value">$47,832.50</div>
+          <div class="portfolio-change">+$1,234.56 (+2.65%)</div>
+        </div>
+        
+        <div class="holding-card">
+          <div class="holding-info">
+            <h3>AAPL</h3>
+            <p>50 shares</p>
+          </div>
+          <div class="holding-value">
+            <h3>$8,926.00</h3>
+            <p style="color: var(--green)">+2.34%</p>
+          </div>
+        </div>
+        
+        <div class="holding-card">
+          <div class="holding-info">
+            <h3>BTC-USD</h3>
+            <p>0.5 BTC</p>
+          </div>
+          <div class="holding-value">
+            <h3>$21,450.00</h3>
+            <p style="color: var(--green)">+4.12%</p>
+          </div>
+        </div>
+        
+        <div class="holding-card">
+          <div class="holding-info">
+            <h3>MSFT</h3>
+            <p>25 shares</p>
+          </div>
+          <div class="holding-value">
+            <h3>$9,472.75</h3>
+            <p style="color: var(--red)">-0.54%</p>
+          </div>
+        </div>
+
+        <div class="holding-card">
+          <div class="holding-info">
+            <h3>ETH-USD</h3>
+            <p>3.2 ETH</p>
+          </div>
+          <div class="holding-value">
+            <h3>$7,983.75</h3>
+            <p style="color: var(--green)">+1.87%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal Screen -->
+    <div id="journal-screen" style="display: none;">
+      <div class="header">
+        <h1>Journal</h1>
+        <div class="header-icons">
+          <span>➕</span>
+        </div>
+      </div>
+      
+      <div class="content">
+        <div class="trade-card">
+          <div class="trade-header">
+            <span class="trade-symbol">AAPL Long</span>
+            <span class="trade-pnl" style="color: var(--green)">+$456.20</span>
+          </div>
+          <div class="trade-details">
+            <span>Entry: $172.50</span>
+            <span>Exit: $178.52</span>
+            <span>Dec 1</span>
+          </div>
+        </div>
+        
+        <div class="trade-card loss">
+          <div class="trade-header">
+            <span class="trade-symbol">NVDA Short</span>
+            <span class="trade-pnl" style="color: var(--red)">-$234.80</span>
+          </div>
+          <div class="trade-details">
+            <span>Entry: $735.00</span>
+            <span>Exit: $721.33</span>
+            <span>Nov 30</span>
+          </div>
+        </div>
+        
+        <div class="trade-card">
+          <div class="trade-header">
+            <span class="trade-symbol">BTC-USD Long</span>
+            <span class="trade-pnl" style="color: var(--green)">+$1,250.00</span>
+          </div>
+          <div class="trade-details">
+            <span>Entry: $41,200</span>
+            <span>Exit: $43,700</span>
+            <span>Nov 28</span>
+          </div>
+        </div>
+
+        <div class="trade-card">
+          <div class="trade-header">
+            <span class="trade-symbol">MSFT Long</span>
+            <span class="trade-pnl" style="color: var(--green)">+$312.50</span>
+          </div>
+          <div class="trade-details">
+            <span>Entry: $365.00</span>
+            <span>Exit: $378.91</span>
+            <span>Nov 25</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts Screen -->
+    <div id="alerts-screen" style="display: none;">
+      <div class="header">
+        <h1>Alerts</h1>
+        <div class="header-icons">
+          <span>➕</span>
+        </div>
+      </div>
+      
+      <div class="content">
+        <div class="alert-card">
+          <div class="alert-info">
+            <h3>AAPL > $180.00</h3>
+            <p>Price above target</p>
+          </div>
+          <div class="alert-status"></div>
+        </div>
+        
+        <div class="alert-card">
+          <div class="alert-info">
+            <h3>BTC-USD > $45,000</h3>
+            <p>Price above target</p>
+          </div>
+          <div class="alert-status" style="background: var(--text-muted)"></div>
+        </div>
+        
+        <div class="alert-card">
+          <div class="alert-info">
+            <h3>NVDA < $700.00</h3>
+            <p>Price below target</p>
+          </div>
+          <div class="alert-status" style="background: var(--text-muted)"></div>
+        </div>
+
+        <div class="alert-card">
+          <div class="alert-info">
+            <h3>ETH-USD > $2,500</h3>
+            <p>Price above target</p>
+          </div>
+          <div class="alert-status"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tab-bar">
+      <div class="tab active" onclick="showScreen('scanner')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        Scanner
+      </div>
+      <div class="tab" onclick="showScreen('portfolio')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        Portfolio
+      </div>
+      <div class="tab" onclick="showScreen('journal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        Journal
+      </div>
+      <div class="tab" onclick="showScreen('alerts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        Alerts
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(screen) {
+      // Hide all screens
+      document.getElementById('scanner-screen').style.display = 'none';
+      document.getElementById('portfolio-screen').style.display = 'none';
+      document.getElementById('journal-screen').style.display = 'none';
+      document.getElementById('alerts-screen').style.display = 'none';
+      
+      // Show selected screen
+      document.getElementById(screen + '-screen').style.display = 'block';
+      
+      // Update nav buttons
+      document.querySelectorAll('.screen-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update tab bar
+      document.querySelectorAll('.tab').forEach((tab, index) => {
+        tab.classList.remove('active');
+        const screens = ['scanner', 'portfolio', 'journal', 'alerts'];
+        if (screens[index] === screen) {
+          tab.classList.add('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
