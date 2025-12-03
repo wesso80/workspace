@@ -1,25 +1,14 @@
 const { getDefaultConfig } = require('expo/metro-config');
-const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-// Create empty shim path
-const emptyShim = path.resolve(__dirname, 'shims/empty.js');
+const nodeModules = ['tty', 'fs', 'net', 'dns', 'child_process', 'stream', 'os', 'path', 'zlib', 'http', 'https', 'crypto', 'util'];
 
-config.resolver.extraNodeModules = {
-  ...config.resolver.extraNodeModules,
-  tty: emptyShim,
-  fs: emptyShim,
-  net: emptyShim,
-  dns: emptyShim,
-  child_process: emptyShim,
-  stream: emptyShim,
-  os: emptyShim,
-  path: emptyShim,
-  zlib: emptyShim,
-  http: emptyShim,
-  https: emptyShim,
-  crypto: emptyShim,
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (nodeModules.includes(moduleName)) {
+    return { type: 'empty' };
+  }
+  return context.resolveRequest(context, moduleName, platform);
 };
 
 module.exports = config;
