@@ -1,7 +1,20 @@
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '@/constants/Colors';
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  accent: '#14b8a6',
+  accentSoft: 'rgba(20, 184, 166, 0.12)',
+  green: '#22c55e',
+  greenSoft: 'rgba(34, 197, 94, 0.12)',
+  tealLight: '#a5f3fc',
+  tealBorder: 'rgba(34, 197, 235, 0.35)',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+};
 
 const conditions = ['Above', 'Below', 'Crosses'];
 
@@ -36,7 +49,7 @@ export default function AddAlertScreen() {
             <TextInput
               style={styles.symbolInput}
               placeholder="e.g. AAPL, BTC-USD"
-              placeholderTextColor={Colors.dark.textMuted}
+              placeholderTextColor={COLORS.textMuted}
               value={symbol}
               onChangeText={setSymbol}
               autoCapitalize="characters"
@@ -54,16 +67,10 @@ export default function AddAlertScreen() {
             {conditions.map((c, index) => (
               <TouchableOpacity
                 key={c}
-                style={[
-                  styles.conditionButton,
-                  condition === index && styles.conditionButtonActive,
-                ]}
+                style={[styles.conditionButton, condition === index && styles.conditionButtonActive]}
                 onPress={() => setCondition(index)}
               >
-                <Text style={[
-                  styles.conditionText,
-                  condition === index && styles.conditionTextActive,
-                ]}>
+                <Text style={[styles.conditionText, condition === index && styles.conditionTextActive]}>
                   {c}
                 </Text>
               </TouchableOpacity>
@@ -78,7 +85,7 @@ export default function AddAlertScreen() {
             <TextInput
               style={styles.priceInputField}
               placeholder="0.00"
-              placeholderTextColor={Colors.dark.textMuted}
+              placeholderTextColor={COLORS.textMuted}
               value={price}
               onChangeText={setPrice}
               keyboardType="decimal-pad"
@@ -97,8 +104,8 @@ export default function AddAlertScreen() {
               <Switch
                 value={pushEnabled}
                 onValueChange={setPushEnabled}
-                trackColor={{ false: Colors.dark.card, true: Colors.dark.greenSoft }}
-                thumbColor={pushEnabled ? Colors.dark.green : Colors.dark.textMuted}
+                trackColor={{ false: COLORS.card, true: COLORS.greenSoft }}
+                thumbColor={pushEnabled ? COLORS.green : COLORS.textMuted}
               />
             </View>
             <View style={styles.divider} />
@@ -110,8 +117,8 @@ export default function AddAlertScreen() {
               <Switch
                 value={emailEnabled}
                 onValueChange={setEmailEnabled}
-                trackColor={{ false: Colors.dark.card, true: Colors.dark.greenSoft }}
-                thumbColor={emailEnabled ? Colors.dark.green : Colors.dark.textMuted}
+                trackColor={{ false: COLORS.card, true: COLORS.greenSoft }}
+                thumbColor={emailEnabled ? COLORS.green : COLORS.textMuted}
               />
             </View>
           </View>
@@ -122,7 +129,7 @@ export default function AddAlertScreen() {
           <TextInput
             style={styles.notesInput}
             placeholder="Add any notes about this alert..."
-            placeholderTextColor={Colors.dark.textMuted}
+            placeholderTextColor={COLORS.textMuted}
             value={notes}
             onChangeText={setNotes}
             multiline
@@ -156,225 +163,43 @@ export default function AddAlertScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    paddingTop: Spacing.xl + 20,
-    backgroundColor: Colors.dark.card,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-  },
-  cancelButton: {
-    padding: Spacing.sm,
-  },
-  cancelText: {
-    fontSize: FontSize.md,
-    color: Colors.dark.textMuted,
-    fontWeight: '500',
-  },
-  headerTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  saveButton: {
-    padding: Spacing.sm,
-  },
-  saveText: {
-    fontSize: FontSize.md,
-    color: Colors.dark.accent,
-    fontWeight: '600',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Spacing.md,
-  },
-  section: {
-    marginBottom: Spacing.lg,
-  },
-  label: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.dark.textMuted,
-    marginBottom: Spacing.sm,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  symbolRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  symbolInput: {
-    flex: 1,
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    fontSize: FontSize.lg,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  searchButton: {
-    width: 52,
-    height: 52,
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  searchIcon: {
-    fontSize: 20,
-  },
-  conditionRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  conditionButton: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    alignItems: 'center',
-    backgroundColor: Colors.dark.card,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  conditionButtonActive: {
-    backgroundColor: Colors.dark.accent,
-    borderColor: Colors.dark.accent,
-  },
-  conditionText: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.dark.textMuted,
-  },
-  conditionTextActive: {
-    color: '#0b1120',
-  },
-  priceInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  currencySymbol: {
-    fontSize: FontSize.xl,
-    color: Colors.dark.textMuted,
-    marginRight: Spacing.sm,
-  },
-  priceInputField: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    fontSize: FontSize.xl,
-    fontWeight: '600',
-    color: Colors.dark.text,
-  },
-  notificationCard: {
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    overflow: 'hidden',
-  },
-  notificationRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.md,
-  },
-  notificationLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  notificationIcon: {
-    fontSize: 20,
-  },
-  notificationLabel: {
-    fontSize: FontSize.md,
-    color: Colors.dark.text,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
-    marginHorizontal: Spacing.md,
-  },
-  notesInput: {
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    fontSize: FontSize.md,
-    color: Colors.dark.text,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    minHeight: 80,
-  },
-  previewCard: {
-    backgroundColor: Colors.dark.accentSoft,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.tealBorder,
-  },
-  previewTitle: {
-    fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.dark.tealLight,
-    marginBottom: Spacing.sm,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  previewContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  previewIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(20, 184, 166, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  previewIconText: {
-    fontSize: 18,
-  },
-  previewText: {
-    flex: 1,
-    fontSize: FontSize.md,
-    color: Colors.dark.text,
-    lineHeight: 22,
-  },
-  previewHighlight: {
-    fontWeight: '700',
-    color: Colors.dark.accent,
-  },
-  createButton: {
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.full,
-    padding: Spacing.md,
-    alignItems: 'center',
-    marginBottom: Spacing.xxl,
-    ...Shadows.small,
-  },
-  createButtonText: {
-    fontSize: FontSize.lg,
-    fontWeight: '600',
-    color: '#0b1120',
-  },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingTop: 60, backgroundColor: COLORS.card, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  cancelButton: { padding: 8 },
+  cancelText: { fontSize: 15, color: COLORS.textMuted, fontWeight: '500' },
+  headerTitle: { fontSize: 16, fontWeight: '700', color: COLORS.text },
+  saveButton: { padding: 8 },
+  saveText: { fontSize: 15, color: COLORS.accent, fontWeight: '600' },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16 },
+  section: { marginBottom: 24 },
+  label: { fontSize: 13, fontWeight: '600', color: COLORS.textMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
+  symbolRow: { flexDirection: 'row', gap: 8 },
+  symbolInput: { flex: 1, backgroundColor: COLORS.card, borderRadius: 18, padding: 16, fontSize: 16, fontWeight: '600', color: COLORS.text, borderWidth: 1, borderColor: COLORS.border },
+  searchButton: { width: 52, height: 52, backgroundColor: COLORS.card, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: COLORS.border },
+  searchIcon: { fontSize: 20 },
+  conditionRow: { flexDirection: 'row', gap: 8 },
+  conditionButton: { flex: 1, paddingVertical: 16, borderRadius: 18, alignItems: 'center', backgroundColor: COLORS.card, borderWidth: 1, borderColor: COLORS.border },
+  conditionButtonActive: { backgroundColor: COLORS.accent, borderColor: COLORS.accent },
+  conditionText: { fontSize: 15, fontWeight: '600', color: COLORS.textMuted },
+  conditionTextActive: { color: '#0b1120' },
+  priceInput: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.card, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: COLORS.border },
+  currencySymbol: { fontSize: 20, color: COLORS.textMuted, marginRight: 8 },
+  priceInputField: { flex: 1, paddingVertical: 16, fontSize: 20, fontWeight: '600', color: COLORS.text },
+  notificationCard: { backgroundColor: COLORS.card, borderRadius: 18, borderWidth: 1, borderColor: COLORS.border, overflow: 'hidden' },
+  notificationRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
+  notificationLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  notificationIcon: { fontSize: 20 },
+  notificationLabel: { fontSize: 15, color: COLORS.text },
+  divider: { height: 1, backgroundColor: 'rgba(15, 23, 42, 0.85)', marginHorizontal: 16 },
+  notesInput: { backgroundColor: COLORS.card, borderRadius: 18, padding: 16, fontSize: 15, color: COLORS.text, borderWidth: 1, borderColor: COLORS.border, minHeight: 80 },
+  previewCard: { backgroundColor: COLORS.accentSoft, borderRadius: 18, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: COLORS.tealBorder },
+  previewTitle: { fontSize: 13, fontWeight: '600', color: COLORS.tealLight, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
+  previewContent: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  previewIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(20, 184, 166, 0.2)', alignItems: 'center', justifyContent: 'center' },
+  previewIconText: { fontSize: 18 },
+  previewText: { flex: 1, fontSize: 15, color: COLORS.text, lineHeight: 22 },
+  previewHighlight: { fontWeight: '700', color: COLORS.accent },
+  createButton: { backgroundColor: COLORS.accent, borderRadius: 999, padding: 16, alignItems: 'center', marginBottom: 48 },
+  createButtonText: { fontSize: 16, fontWeight: '600', color: '#0b1120' },
 });

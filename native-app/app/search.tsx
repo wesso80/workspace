@@ -1,8 +1,18 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useState, useMemo } from 'react';
 import { router } from 'expo-router';
-import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '@/constants/Colors';
-import { SearchBar } from '@/components/SearchBar';
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  accent: '#14b8a6',
+  green: '#22c55e',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+  warning: '#f59e0b',
+  secondary: '#6366f1',
+};
 
 const allSymbols = [
   { symbol: 'AAPL', name: 'Apple Inc.', type: 'equity' },
@@ -46,9 +56,9 @@ export default function SearchScreen() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'crypto': return Colors.dark.accent;
-      case 'commodity': return Colors.dark.warning;
-      default: return Colors.dark.secondary;
+      case 'crypto': return COLORS.accent;
+      case 'commodity': return COLORS.warning;
+      default: return COLORS.secondary;
     }
   };
 
@@ -63,12 +73,23 @@ export default function SearchScreen() {
       </View>
 
       <View style={styles.searchContainer}>
-        <SearchBar
-          value={query}
-          onChangeText={setQuery}
-          onClear={() => setQuery('')}
-          placeholder="Search stocks, crypto, commodities..."
-        />
+        <View style={styles.searchBar}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search stocks, crypto, commodities..."
+            placeholderTextColor={COLORS.textMuted}
+            value={query}
+            onChangeText={setQuery}
+            autoCapitalize="characters"
+            autoCorrect={false}
+          />
+          {query.length > 0 && (
+            <TouchableOpacity onPress={() => setQuery('')}>
+              <Text style={styles.clearButton}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -161,141 +182,34 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    paddingTop: Spacing.xl + 20,
-    backgroundColor: Colors.dark.card,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-  },
-  backButton: {
-    padding: Spacing.sm,
-    width: 60,
-  },
-  backText: {
-    fontSize: FontSize.md,
-    color: Colors.dark.accent,
-    fontWeight: '500',
-  },
-  headerTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  searchContainer: {
-    padding: Spacing.md,
-    backgroundColor: Colors.dark.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Spacing.md,
-    paddingTop: 0,
-  },
-  section: {
-    marginBottom: Spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-    color: Colors.dark.textMuted,
-    marginBottom: Spacing.sm,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  chipContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-  },
-  chip: {
-    backgroundColor: Colors.dark.card,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  chipText: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.text,
-    fontWeight: '500',
-  },
-  resultItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    ...Shadows.small,
-  },
-  resultLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  resultIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resultIconText: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-  },
-  resultSymbol: {
-    fontSize: FontSize.md,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  resultName: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
-    marginTop: 2,
-  },
-  typeBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-  },
-  typeText: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-  },
-  arrowText: {
-    fontSize: FontSize.lg,
-    color: Colors.dark.textMuted,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xxl,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: Spacing.md,
-  },
-  emptyTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    marginBottom: Spacing.xs,
-  },
-  emptyText: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.textMuted,
-  },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingTop: 60, backgroundColor: COLORS.card, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  backButton: { padding: 8, width: 60 },
+  backText: { fontSize: 15, color: COLORS.accent, fontWeight: '500' },
+  headerTitle: { fontSize: 16, fontWeight: '700', color: COLORS.text },
+  searchContainer: { padding: 16, backgroundColor: COLORS.background },
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.card, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: COLORS.border },
+  searchIcon: { fontSize: 16, marginRight: 8 },
+  searchInput: { flex: 1, paddingVertical: 14, fontSize: 15, color: COLORS.text },
+  clearButton: { fontSize: 16, color: COLORS.textMuted, padding: 4 },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16, paddingTop: 0 },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 11, fontWeight: '600', color: COLORS.textMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
+  chipContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { backgroundColor: COLORS.card, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: COLORS.border },
+  chipText: { fontSize: 13, color: COLORS.text, fontWeight: '500' },
+  resultItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: COLORS.card, borderRadius: 18, padding: 16, marginBottom: 8, borderWidth: 1, borderColor: COLORS.border },
+  resultLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  resultIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  resultIconText: { fontSize: 16, fontWeight: '700' },
+  resultSymbol: { fontSize: 15, fontWeight: '700', color: COLORS.text },
+  resultName: { fontSize: 11, color: COLORS.textMuted, marginTop: 2 },
+  typeBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999 },
+  typeText: { fontSize: 11, fontWeight: '600' },
+  arrowText: { fontSize: 16, color: COLORS.textMuted },
+  emptyState: { alignItems: 'center', paddingVertical: 48 },
+  emptyIcon: { fontSize: 48, marginBottom: 16 },
+  emptyTitle: { fontSize: 16, fontWeight: '600', color: COLORS.text, marginBottom: 4 },
+  emptyText: { fontSize: 13, color: COLORS.textMuted },
 });

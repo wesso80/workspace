@@ -1,9 +1,23 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState } from 'react';
-import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '@/constants/Colors';
 
 const { width } = Dimensions.get('window');
+
+const COLORS = {
+  background: '#05070b',
+  card: '#111624',
+  accent: '#14b8a6',
+  green: '#22c55e',
+  greenSoft: 'rgba(34, 197, 94, 0.12)',
+  text: '#f9fafb',
+  textMuted: '#9ca3af',
+  border: '#1f2933',
+  bullish: '#22c55e',
+  bullishSoft: 'rgba(34, 197, 94, 0.12)',
+  bearish: '#ef4444',
+  bearishSoft: 'rgba(239, 68, 68, 0.12)',
+};
 
 const mockStockData: Record<string, any> = {
   'AAPL': { name: 'Apple Inc.', price: 189.84, change: 2.34, changePercent: 1.25, high: 191.50, low: 187.20, open: 188.00, volume: '52.3M', marketCap: '2.95T', pe: 29.5, score: 3 },
@@ -13,12 +27,12 @@ const mockStockData: Record<string, any> = {
 };
 
 const technicalIndicators = [
-  { name: 'RSI (14)', value: 58.3, signal: 'Neutral', color: Colors.dark.textMuted },
-  { name: 'MACD', value: 2.45, signal: 'Bullish', color: Colors.dark.bullish },
-  { name: 'SMA 20', value: 185.50, signal: 'Above', color: Colors.dark.bullish },
-  { name: 'SMA 50', value: 178.20, signal: 'Above', color: Colors.dark.bullish },
-  { name: 'SMA 200', value: 165.80, signal: 'Above', color: Colors.dark.bullish },
-  { name: 'ATR', value: 4.25, signal: 'Normal', color: Colors.dark.textMuted },
+  { name: 'RSI (14)', value: 58.3, signal: 'Neutral', isBullish: null },
+  { name: 'MACD', value: 2.45, signal: 'Bullish', isBullish: true },
+  { name: 'SMA 20', value: 185.50, signal: 'Above', isBullish: true },
+  { name: 'SMA 50', value: 178.20, signal: 'Above', isBullish: true },
+  { name: 'SMA 200', value: 165.80, signal: 'Above', isBullish: true },
+  { name: 'ATR', value: 4.25, signal: 'Normal', isBullish: null },
 ];
 
 const timeframes = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
@@ -40,7 +54,7 @@ export default function StockDetailScreen() {
           <Text style={styles.symbol}>{symbol}</Text>
           <Text style={styles.name}>{stock.name}</Text>
         </View>
-        <View style={[styles.scoreBadge, { backgroundColor: isBullish ? Colors.dark.bullish : Colors.dark.bearish }]}>
+        <View style={[styles.scoreBadge, { backgroundColor: isBullish ? COLORS.bullish : COLORS.bearish }]}>
           <Text style={styles.scoreText}>{stock.score >= 0 ? '+' : ''}{stock.score}</Text>
         </View>
       </View>
@@ -50,8 +64,8 @@ export default function StockDetailScreen() {
           <Text style={styles.price}>
             ${stock.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </Text>
-          <View style={[styles.changeBadge, { backgroundColor: isBullish ? Colors.dark.bullishSoft : Colors.dark.bearishSoft }]}>
-            <Text style={[styles.changeText, { color: isBullish ? Colors.dark.bullish : Colors.dark.bearish }]}>
+          <View style={[styles.changeBadge, { backgroundColor: isBullish ? COLORS.bullishSoft : COLORS.bearishSoft }]}>
+            <Text style={[styles.changeText, { color: isBullish ? COLORS.bullish : COLORS.bearish }]}>
               {isBullish ? '↑' : '↓'} ${Math.abs(stock.change).toFixed(2)} ({Math.abs(stock.changePercent).toFixed(2)}%)
             </Text>
           </View>
@@ -67,7 +81,7 @@ export default function StockDetailScreen() {
                     styles.chartBar, 
                     { 
                       height: 20 + Math.random() * 80,
-                      backgroundColor: isBullish ? Colors.dark.bullish : Colors.dark.bearish,
+                      backgroundColor: isBullish ? COLORS.bullish : COLORS.bearish,
                       opacity: 0.3 + (i / 20) * 0.7
                     }
                   ]} 
@@ -99,11 +113,11 @@ export default function StockDetailScreen() {
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>High</Text>
-            <Text style={[styles.statValue, { color: Colors.dark.bullish }]}>${stock.high.toLocaleString()}</Text>
+            <Text style={[styles.statValue, { color: COLORS.bullish }]}>${stock.high.toLocaleString()}</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Low</Text>
-            <Text style={[styles.statValue, { color: Colors.dark.bearish }]}>${stock.low.toLocaleString()}</Text>
+            <Text style={[styles.statValue, { color: COLORS.bearish }]}>${stock.low.toLocaleString()}</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Volume</Text>
@@ -127,8 +141,8 @@ export default function StockDetailScreen() {
                 <Text style={styles.indicatorName}>{indicator.name}</Text>
                 <View style={styles.indicatorRight}>
                   <Text style={styles.indicatorValue}>{indicator.value}</Text>
-                  <View style={[styles.signalBadge, { backgroundColor: indicator.color === Colors.dark.bullish ? Colors.dark.greenSoft : 'rgba(156, 163, 175, 0.15)' }]}>
-                    <Text style={[styles.signalText, { color: indicator.color }]}>{indicator.signal}</Text>
+                  <View style={[styles.signalBadge, { backgroundColor: indicator.isBullish === true ? COLORS.greenSoft : 'rgba(156, 163, 175, 0.15)' }]}>
+                    <Text style={[styles.signalText, { color: indicator.isBullish === true ? COLORS.bullish : COLORS.textMuted }]}>{indicator.signal}</Text>
                   </View>
                 </View>
               </View>
@@ -150,241 +164,48 @@ export default function StockDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    paddingTop: Spacing.xl + 20,
-    backgroundColor: Colors.dark.card,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-  },
-  backButton: {
-    padding: Spacing.sm,
-  },
-  backText: {
-    fontSize: FontSize.md,
-    color: Colors.dark.accent,
-    fontWeight: '500',
-  },
-  headerTitle: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  symbol: {
-    fontSize: FontSize.xl,
-    fontWeight: '700',
-    color: Colors.dark.text,
-  },
-  name: {
-    fontSize: FontSize.sm,
-    color: Colors.dark.textMuted,
-  },
-  scoreBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scoreText: {
-    fontSize: FontSize.md,
-    fontWeight: '700',
-    color: '#0b1120',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Spacing.md,
-  },
-  priceCard: {
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-  },
-  price: {
-    fontSize: 42,
-    fontWeight: '700',
-    color: Colors.dark.text,
-    marginBottom: Spacing.sm,
-  },
-  changeBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-  },
-  changeText: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-  },
-  chartContainer: {
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    ...Shadows.soft,
-  },
-  chartPlaceholder: {
-    height: 180,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  chartLine: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    width: '100%',
-    height: 150,
-    paddingHorizontal: Spacing.sm,
-  },
-  chartBar: {
-    width: (width - 80) / 22,
-    borderRadius: 2,
-  },
-  chartLabel: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
-    marginTop: Spacing.sm,
-  },
-  timeframeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: Spacing.xs,
-  },
-  timeframeButton: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    alignItems: 'center',
-    borderRadius: BorderRadius.sm,
-    backgroundColor: 'transparent',
-  },
-  timeframeButtonActive: {
-    backgroundColor: Colors.dark.accent,
-  },
-  timeframeText: {
-    fontSize: FontSize.sm,
-    fontWeight: '500',
-    color: Colors.dark.textMuted,
-  },
-  timeframeTextActive: {
-    color: '#0b1120',
-    fontWeight: '600',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    ...Shadows.small,
-  },
-  statItem: {
-    width: '33.33%',
-    paddingVertical: Spacing.sm,
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: FontSize.xs,
-    color: Colors.dark.textMuted,
-    marginBottom: 4,
-    textTransform: 'uppercase',
-  },
-  statValue: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.dark.text,
-  },
-  section: {
-    marginBottom: Spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.dark.text,
-    marginBottom: Spacing.sm,
-  },
-  indicatorsCard: {
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    overflow: 'hidden',
-    ...Shadows.small,
-  },
-  indicatorRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.md,
-  },
-  indicatorBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(15, 23, 42, 0.85)',
-  },
-  indicatorName: {
-    fontSize: FontSize.md,
-    color: Colors.dark.text,
-  },
-  indicatorRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  indicatorValue: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.dark.text,
-  },
-  signalBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
-    borderRadius: BorderRadius.full,
-  },
-  signalText: {
-    fontSize: FontSize.xs,
-    fontWeight: '600',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginBottom: Spacing.xxl,
-  },
-  alertButton: {
-    flex: 1,
-    backgroundColor: Colors.dark.card,
-    borderRadius: BorderRadius.full,
-    padding: Spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  alertButtonText: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.dark.text,
-  },
-  tradeButton: {
-    flex: 1,
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.full,
-    padding: Spacing.md,
-    alignItems: 'center',
-    ...Shadows.small,
-  },
-  tradeButtonText: {
-    fontSize: FontSize.md,
-    fontWeight: '600',
-    color: '#0b1120',
-  },
+  container: { flex: 1, backgroundColor: COLORS.background },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingTop: 60, backgroundColor: COLORS.card, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  backButton: { padding: 8 },
+  backText: { fontSize: 15, color: COLORS.accent, fontWeight: '500' },
+  headerTitle: { alignItems: 'center', flex: 1 },
+  symbol: { fontSize: 20, fontWeight: '700', color: COLORS.text },
+  name: { fontSize: 13, color: COLORS.textMuted },
+  scoreBadge: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  scoreText: { fontSize: 15, fontWeight: '700', color: '#0b1120' },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16 },
+  priceCard: { alignItems: 'center', marginBottom: 24 },
+  price: { fontSize: 42, fontWeight: '700', color: COLORS.text, marginBottom: 8 },
+  changeBadge: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999 },
+  changeText: { fontSize: 15, fontWeight: '600' },
+  chartContainer: { backgroundColor: COLORS.card, borderRadius: 18, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: COLORS.border },
+  chartPlaceholder: { height: 180, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 16 },
+  chartLine: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', width: '100%', height: 150, paddingHorizontal: 8 },
+  chartBar: { width: (width - 80) / 22, borderRadius: 2 },
+  chartLabel: { fontSize: 11, color: COLORS.textMuted, marginTop: 8 },
+  timeframeRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 4 },
+  timeframeButton: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 8, backgroundColor: 'transparent' },
+  timeframeButtonActive: { backgroundColor: COLORS.accent },
+  timeframeText: { fontSize: 13, fontWeight: '500', color: COLORS.textMuted },
+  timeframeTextActive: { color: '#0b1120', fontWeight: '600' },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', backgroundColor: COLORS.card, borderRadius: 18, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: COLORS.border },
+  statItem: { width: '33.33%', paddingVertical: 8, alignItems: 'center' },
+  statLabel: { fontSize: 11, color: COLORS.textMuted, marginBottom: 4, textTransform: 'uppercase' },
+  statValue: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: COLORS.text, marginBottom: 8 },
+  indicatorsCard: { backgroundColor: COLORS.card, borderRadius: 18, borderWidth: 1, borderColor: COLORS.border, overflow: 'hidden' },
+  indicatorRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
+  indicatorBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(15, 23, 42, 0.85)' },
+  indicatorName: { fontSize: 15, color: COLORS.text },
+  indicatorRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  indicatorValue: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  signalBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 },
+  signalText: { fontSize: 11, fontWeight: '600' },
+  actionButtons: { flexDirection: 'row', gap: 8, marginBottom: 48 },
+  alertButton: { flex: 1, backgroundColor: COLORS.card, borderRadius: 999, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: COLORS.border },
+  alertButtonText: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  tradeButton: { flex: 1, backgroundColor: COLORS.accent, borderRadius: 999, padding: 16, alignItems: 'center' },
+  tradeButtonText: { fontSize: 15, fontWeight: '600', color: '#0b1120' },
 });
