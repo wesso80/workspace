@@ -17,9 +17,23 @@
     "production": {
       "distribution": "store",
       "autoIncrement": true,
+      "developmentClient": false,
+      "env": {
+        "NODE_ENV": "production"
+      },
       "ios": {
         "buildConfiguration": "Release",
-        "image": "latest"
+        "image": "latest",
+        "resourceClass": "m-medium"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "wesso80@me.com",
+        "ascAppId": "6743133515",
+        "appleTeamId": "HM8B38R92Q"
       }
     }
   }
